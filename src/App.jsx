@@ -1,35 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import schoolLogo from './assets/kando.jpg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 export const App = () => {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get('https://chess.sulla.hu/chess')
+      setData(res.data)
+    }
+    fetchData()
+  }, [])
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <a href="https://www.kkszki.hu" target="_blank"><img src={schoolLogo} alt="Iskola logó" width="200" /></a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          a számláló állása: {count}
-        </button>
-        <p>
-          Módosítsd az <code>src/App.jsx</code>-t és mentsd le, hogy tesztelhesd a HMR-t!
-        </p>
-      </div>
-      <p className="read-the-docs">
-         Kattints a React, a Kandó, vagy a Vite logókra, további információkért!
-      </p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', padding: '20px' }}>
+      {data.map((player) => (
+        <div key={player.id} style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+          <img src={player.image_url} alt={player.name} style={{ width: '150px', height: '150px', objectFit: 'cover' }} />
+          <h3>{player.name}</h3>
+          <p>Született: {player.birth_date}</p>
+          <p>VB címek: {player.world_ch_won}</p>
+          <a href={player.profile_url} target="_blank" rel="noreferrer">Profil</a>
+        </div>
+      ))}
+    </div>
     </>
   )
 }
